@@ -1,4 +1,3 @@
-<!--@todo: auth, sync with interval, -->
 <template>
   <div>
     <h1>{{ intro }}</h1>
@@ -89,7 +88,7 @@ export default {
       return api.login(this.username, this.password);
     },
     getRooms(){
-      //
+      return api.callMethod("rooms/get", [ { "$date": new Date().getDate() } ]);
     },
     authAndGetRooms(){
       this.auth().subscribe(
@@ -107,6 +106,15 @@ export default {
               this.connect.userId = res.result.id;
             }
 
+            this.getRooms().subscribe(
+                res => {
+                    if (res.msg !== "result") return;
+                    // eslint-disable-next-line no-console
+                    console.log("getRooms", res);
+
+                    // @todo fetch the rooms and create list og them by name property
+                }
+            )
 
           }
         }
