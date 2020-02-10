@@ -16,21 +16,21 @@
     </div>
 
     <div v-if="connect.userId && connect.authToken">
-      <h3>Available Rooms</h3>
+      <h3>Available Rooms - click will provoke connection </h3>
       <ul>
-        <li v-for="(room, $index) in rooms" :key="$index">{{ room }}</li>
+        <li v-for="(room, $index) in rooms" :key="$index" style="cursor: pointer;" v-on:click="connectToRoom($index)">{{ formatRoom(room) }}</li>
       </ul>
     </div>
 
-    <div v-if="rooms.length > 0">
-      <h3>Connect to room</h3>
-      <p>
-        <input id="roomId" type="text" v-model="connect.roomId"> Id
-      </p>
-      <p>
-        <input type="button" v-on:click="connectToRoom" value="connect">
-      </p>
-    </div>
+<!--    <div v-if="rooms.length > 0">-->
+<!--      <h3>Connect to room</h3>-->
+<!--      <p>-->
+<!--        <input id="roomId" type="text" v-model="connect.roomId"> Id-->
+<!--      </p>-->
+<!--      <p>-->
+<!--        <input type="button" v-on:click="connectToRoom" value="connect">-->
+<!--      </p>-->
+<!--    </div>-->
 
     <div v-if="connect.roomId">
       <h3>Write a message</h3>
@@ -111,8 +111,7 @@ export default {
                     if (res.msg !== "result") return;
                     // eslint-disable-next-line no-console
                     console.log("getRooms", res);
-
-                    // @todo fetch the rooms and create list og them by name property
+                    this.rooms = res.result;
                 }
             )
 
@@ -138,15 +137,36 @@ export default {
       this.newMessage = '';
     },
 
+    // connect to selected room by index
     connectToRoom(){
-      api.sendMessage({
-        "msg": "method",
-        "method": "openRoom",
-        "id": this.connect.roomId,
-        "params": [
-          "roomId"
-        ]
-      });
+      return;
+
+      // this.connect.roomId = 123;
+      // api.sendMessage({
+      //   "msg": "method",
+      //   "method": "openRoom",
+      //   "id": this.connect.roomId,
+      //   "params": [
+      //     "roomId"
+      //   ]
+      // });
+    },
+
+    // prepare result name of room
+    formatRoom(entity){
+      var name = '-';
+      switch (entity.t) {
+        case "d":
+          name = "private";
+          break;
+        case "p":
+          name = entity.fname;
+          break;
+        default:
+          name = entity.name;
+          break;
+      }
+      return name;
     }
   }
 }
