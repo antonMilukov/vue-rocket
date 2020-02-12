@@ -22,17 +22,7 @@
       </ul>
     </div>
 
-<!--    <div v-if="rooms.length > 0">-->
-<!--      <h3>Connect to room</h3>-->
-<!--      <p>-->
-<!--        <input id="roomId" type="text" v-model="connect.roomId"> Id-->
-<!--      </p>-->
-<!--      <p>-->
-<!--        <input type="button" v-on:click="connectToRoom" value="connect">-->
-<!--      </p>-->
-<!--    </div>-->
-
-    <div v-if="connect.roomId">
+    <div v-if="connect.room">
       <h3>Write a message</h3>
       <p>
         <input id="new_message" type="text" v-model="newMessage"> New message
@@ -43,8 +33,8 @@
       </p>
     </div>
 
-    <div v-if="connect.roomId">
-      <h3>Messages in room {{ connect.roomId}}</h3>
+    <div v-if="connect.room">
+      <h3>Messages in room {{ formatRoom(connect.room) }}</h3>
       <ul>
         <li v-for="(message, $index) in messages" :key="$index">{{ message }}</li>
       </ul>
@@ -63,7 +53,7 @@ export default {
       connect: {
         authToken: null,
         userId: null,
-        roomId: null
+        room: null
       },
       rooms: [],
       intro: "RocketVue component",
@@ -129,7 +119,7 @@ export default {
         "params": [
           {
             "_id": id,
-            "rid": this.connect.roomId,
+            "rid": this.connect.room._id,
             "msg": this.newMessage
           }
         ]
@@ -138,18 +128,16 @@ export default {
     },
 
     // connect to selected room by index
-    connectToRoom(){
-      return;
+    connectToRoom(index){
+      this.connect.room = this.rooms[index]
 
-      // this.connect.roomId = 123;
-      // api.sendMessage({
-      //   "msg": "method",
-      //   "method": "openRoom",
-      //   "id": this.connect.roomId,
-      //   "params": [
-      //     "roomId"
-      //   ]
-      // });
+        // eslint-disable-next-line no-console
+      console.log(this.connect.room);
+
+      this.$nextTick(()=>{
+          api.callMethod("openRoom", [ this.connect.room._id ]);
+      });
+
     },
 
     // prepare result name of room
